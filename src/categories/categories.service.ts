@@ -4,14 +4,15 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { CategoriesRepository } from './categories.repository';
-import { Prisma } from '../generated/prisma/client';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly categoriesRepository: CategoriesRepository) {}
 
-  create(data: Prisma.CategoryCreateInput) {
-    return this.categoriesRepository.create(data);
+  create(dto: CreateCategoryDto) {
+    return this.categoriesRepository.create(dto);
   }
 
   findAll() {
@@ -26,13 +27,13 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: string, data: Prisma.CategoryUpdateInput) {
-    await this.findById(id); // valida que existe antes de atualizar
-    return this.categoriesRepository.update(id, data);
+  async update(id: string, dto: UpdateCategoryDto) {
+    await this.findById(id);
+    return this.categoriesRepository.update(id, dto);
   }
 
   async deactivate(id: string) {
-    await this.findById(id); // valida que existe antes de desativar
+    await this.findById(id);
 
     const totalProdutos = await this.categoriesRepository.countProducts(id);
     if (totalProdutos > 0) {

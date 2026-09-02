@@ -7,15 +7,16 @@ import {
   Post,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Prisma } from '../generated/prisma/client';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() data: Prisma.ProductCreateInput) {
-    return this.productsService.create(data);
+  create(@Body() dto: CreateProductDto) {
+    return this.productsService.create(dto);
   }
 
   @Get()
@@ -29,8 +30,8 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() data: Prisma.ProductUpdateInput) {
-    return this.productsService.update(id, data);
+  update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
+    return this.productsService.update(id, dto);
   }
 
   @Patch(':id/deactivate')
