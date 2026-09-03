@@ -25,6 +25,11 @@ enum Estado {
   INATIVO
 }
 
+enum TipoCliente {
+  PESSOA_FISICA
+  EMPRESA
+}
+
 model Category {
   id        String    @id @default(cuid())
   nome      String    @unique
@@ -52,4 +57,17 @@ model Product {
   category    Category  @relation(fields: [categoryId], references: [id])
 
   @@map("products")
+}
+
+model Client {
+  id         String       @id @default(cuid())
+  nome       String
+  telefone   String
+  documento  String?      @unique
+  tipo       TipoCliente
+  estado     Estado       @default(ATIVO)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@map("clients")
 }
