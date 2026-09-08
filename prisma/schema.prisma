@@ -36,6 +36,17 @@ enum TipoMovimentacao {
   AJUSTE
 }
 
+enum EstadoVenda {
+  ATIVA
+  CANCELADA
+}
+
+enum EstadoPagamento {
+  PENDENTE
+  PARCIAL
+  PAGO
+}
+
 model Category {
   id        String    @id @default(cuid())
   nome      String    @unique
@@ -63,19 +74,23 @@ model Product {
   categoryId       String
   category         Category         @relation(fields: [categoryId], references: [id])
   movimentacoes    StockMovement[]
+  itensVenda       SaleItem[]
 
   @@map("products")
 }
 
 model Client {
-  id         String       @id @default(cuid())
-  nome       String
-  telefone   String
-  documento  String?      @unique
-  tipo       TipoCliente
-  estado     Estado       @default(ATIVO)
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  id            String       @id @default(cuid())
+  nome          String
+  telefone      String
+  documento     String?      @unique
+  tipo          TipoCliente
+  estado        Estado       @default(ATIVO)
+  permiteFiado  Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  vendas        Sale[]
 
   @@map("clients")
 }
@@ -91,4 +106,47 @@ model StockMovement {
   product     Product           @relation(fields: [productId], references: [id])
 
   @@map("stock_movements")
+}
+
+model Sale {
+  id               String           @id @default(cuid())
+  estado           EstadoVenda      @default(ATIVA)
+  estadoPagamento  EstadoPagamento  @default(PENDENTE)
+  valorTotal       Decimal          @db.Decimal(12, 2)
+  valorPago        Decimal          @db.Decimal(12, 2) @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  clientId         String?
+  client           Client?          @relation(fields: [clientId], references: [id])
+
+  itens            SaleItem[]
+  pagamentos       Payment[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id              String   @id @default(cuid())
+  quantidade      Int
+  precoUnitario   Decimal  @db.Decimal(12, 2)
+
+  saleId          String
+  sale            Sale     @relation(fields: [saleId], references: [id])
+
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+
+  @@map("sale_items")
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  valor       Decimal  @db.Decimal(12, 2)
+  createdAt   DateTime @default(now())
+
+  saleId      String
+  sale        Sale     @relation(fields: [saleId], references: [id])
+
+  @@map("payments")
 }

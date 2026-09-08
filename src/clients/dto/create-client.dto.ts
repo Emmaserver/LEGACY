@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsEnum,
+  IsBoolean,
 } from 'class-validator';
 import { TipoCliente } from '../../generated/prisma/enums';
 
@@ -21,4 +22,8 @@ export class CreateClientDto {
 
   @IsEnum(TipoCliente)
   tipo: TipoCliente;
+
+  @IsBoolean()
+  @IsOptional()
+  permiteFiado?: boolean;
 }
