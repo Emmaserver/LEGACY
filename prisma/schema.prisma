@@ -47,6 +47,11 @@ enum EstadoPagamento {
   PAGO
 }
 
+enum Papel {
+  ADMINISTRADOR
+  GERENTE
+}
+
 model Category {
   id        String    @id @default(cuid())
   nome      String    @unique
@@ -149,4 +154,17 @@ model Payment {
   sale        Sale     @relation(fields: [saleId], references: [id])
 
   @@map("payments")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  nome         String
+  email        String   @unique
+  passwordHash String
+  papel        Papel
+  estado       Estado   @default(ATIVO)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
 }
