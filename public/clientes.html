@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Gestão e Vendas</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 antialiased">
+
+    <div class="flex min-h-screen">
+
+        <!-- NAVIGATOR / SIDEBAR -->
+        <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between hidden md:flex">
+            <div>
+                <div class="p-6 border-b border-slate-800">
+                    <h1 class="text-xl font-bold tracking-wide text-indigo-400">Gestão & Vendas</h1>
+                    <p class="text-xs text-gray-400 mt-1">Materiais de Construção</p>
+                </div>
+                <nav class="mt-6 px-4 space-y-2">
+                    <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+                    </a>
+                    <a href="produtos.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-boxes-stacked w-5"></i> Produtos & Stock
+                    </a>
+                    <a href="clientes.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium transition">
+                        <i class="fa-solid fa-users w-5"></i> Clientes
+                    </a>
+                    <a href="pos.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-cart-shopping w-5"></i> Nova Venda (POS)
+                    </a>
+                    <a href="historico.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-clock-rotate-left w-5"></i> Histórico
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-slate-800 text-xs text-gray-500 text-center">
+                v1.0.0 &bull; Sistema Interno
+            </div>
+        </aside>
+
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 flex flex-col">
+            
+            <!-- HEADER SUPERIOR -->
+            <header class="bg-white border-b px-8 py-4 flex justify-between items-center shadow-sm">
+                <h2 class="text-2xl font-bold text-gray-800">Gestão de Clientes</h2>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-medium text-gray-600">Operador</span>
+                    <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold border border-indigo-200">
+                        OP
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTEÚDO DA PÁGINA -->
+            <div class="p-8 space-y-6 flex-1">
+
+                <!-- BARRA DE AÇÕES (Pesquisa, Filtro Tipo e Novo Cliente) -->
+                <div class="flex flex-col sm:flex-row justify-between gap-4">
+                    <div class="flex flex-1 gap-3 max-w-xl">
+                        <!-- Campo de Pesquisa -->
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="text" id="input-busca-cliente" onkeyup="filtrarClientes()" placeholder="Pesquisar por nome, NIF ou telefone..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white shadow-sm">
+                        </div>
+                        <!-- Filtro por Tipo de Cliente -->
+                        <select id="select-tipo-cliente" onchange="filtrarClientes()" class="border border-gray-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm text-gray-600">
+                            <option value="">Todos os Tipos</option>
+                            <option value="Particular">Particular</option>
+                            <option value="Empresa">Empresa</option>
+                        </select>
+                    </div>
+
+                    <!-- Botão para Abrir Modal -->
+                    <button onclick="abrirModalCliente()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm transition shadow-sm">
+                        <i class="fa-solid fa-user-plus"></i> Registar Cliente
+                    </button>
+                </div>
+
+                <!-- TABELA DE CLIENTES -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 uppercase text-xs border-b">
+                                <tr>
+                                    <th class="px-6 py-3">Cliente / NIF</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Telefone</th>
+                                    <th class="px-6 py-3">Endereço</th>
+                                    <th class="px-6 py-3">Total Compras</th>
+                                    <th class="px-6 py-3 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-clientes-body" class="divide-y divide-gray-200 text-gray-700">
+                                <!-- Os clientes serão renderizados dinamicamente pelo js/clientes.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: CADASTRAR / EDITAR CLIENTE -->
+    <div id="modal-cliente" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100">
+            <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+                <h3 id="modal-cliente-titulo" class="font-bold text-gray-800">Registar Novo Cliente</h3>
+                <button onclick="toggleModal('modal-cliente')" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="form-cliente" onsubmit="salvarCliente(event)" class="p-6 space-y-4">
+                <input type="hidden" id="cli-id">
+                
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Nome Completo / Razão Social *</label>
+                    <input type="text" id="cli-nome" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Construtora Kianda Lda">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">NIF *</label>
+                        <input type="text" id="cli-nif" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: 5418001234">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Tipo de Cliente *</label>
+                        <select id="cli-tipo" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                            <option value="Particular">Particular</option>
+                            <option value="Empresa">Empresa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Telefone *</label>
+                        <input type="text" id="cli-telefone" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: +244 923 000 000">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">E-mail</label>
+                        <input type="email" id="cli-email" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="cliente@exemplo.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Endereço / Localização</label>
+                    <input type="text" id="cli-endereco" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Viana, Luanda">
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t">
+                    <button type="button" onclick="toggleModal('modal-cliente')" class="px-4 py-2 border rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/app.js"></script>
+    <script src="js/clientes.js"></script>
+</body>
+</html>

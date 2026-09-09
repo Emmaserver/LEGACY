@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Vendas - Gestão e Vendas</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 antialiased">
+
+    <div class="flex min-h-screen">
+
+        <!-- NAVIGATOR / SIDEBAR -->
+        <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between hidden md:flex">
+            <div>
+                <div class="p-6 border-b border-slate-800">
+                    <h1 class="text-xl font-bold tracking-wide text-indigo-400">Gestão & Vendas</h1>
+                    <p class="text-xs text-gray-400 mt-1">Materiais de Construção</p>
+                </div>
+                <nav class="mt-6 px-4 space-y-2">
+                    <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+                    </a>
+                    <a href="produtos.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-boxes-stacked w-5"></i> Produtos & Stock
+                    </a>
+                    <a href="clientes.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-users w-5"></i> Clientes
+                    </a>
+                    <a href="pos.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-cart-shopping w-5"></i> Nova Venda (POS)
+                    </a>
+                    <a href="historico.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium transition">
+                        <i class="fa-solid fa-clock-rotate-left w-5"></i> Histórico
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-slate-800 text-xs text-gray-500 text-center">
+                v1.0.0 &bull; Sistema Interno
+            </div>
+        </aside>
+
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 flex flex-col">
+            
+            <!-- HEADER SUPERIOR -->
+            <header class="bg-white border-b px-8 py-4 flex justify-between items-center shadow-sm">
+                <h2 class="text-2xl font-bold text-gray-800">Histórico de Vendas</h2>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-medium text-gray-600">Operador</span>
+                    <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold border border-indigo-200">
+                        OP
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTEÚDO DA PÁGINA -->
+            <div class="p-8 space-y-6 flex-1">
+
+                <!-- BARRA DE FILTROS -->
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-1 flex-col sm:flex-row gap-3 w-full">
+                        <!-- Busca por Código de Venda ou Cliente -->
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="text" id="input-busca-venda" onkeyup="filtrarVendas()" placeholder="Pesquisar por Nº Venda ou Cliente..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-gray-50">
+                        </div>
+                        <!-- Filtro por Método de Pagamento -->
+                        <select id="select-metodo-pagamento" onchange="filtrarVendas()" class="border border-gray-300 rounded-lg px-3 py-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-600">
+                            <option value="">Todas as Formas de Pagamento</option>
+                            <option value="Numerário">Numerário</option>
+                            <option value="TPA">TPA / Multicaixa</option>
+                            <option value="Transferência">Transferência</option>
+                        </select>
+                    </div>
+
+                    <!-- Resumo Rápido na Barra -->
+                    <div class="flex items-center gap-4 border-t md:border-t-0 md:border-l pt-3 md:pt-0 md:pl-6 w-full md:w-auto justify-between md:justify-start">
+                        <div class="text-right">
+                            <span class="text-xs text-gray-400 block font-medium">Total Filtrado</span>
+                            <span id="resumo-total-filtrado" class="text-lg font-bold text-indigo-600">0,00 Kz</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABELA DE VENDAS -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 uppercase text-xs border-b">
+                                <tr>
+                                    <th class="px-6 py-3">Nº Venda</th>
+                                    <th class="px-6 py-3">Data e Hora</th>
+                                    <th class="px-6 py-3">Cliente</th>
+                                    <th class="px-6 py-3">Pagamento</th>
+                                    <th class="px-6 py-3">Total</th>
+                                    <th class="px-6 py-3 text-center">Estado</th>
+                                    <th class="px-6 py-3 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-vendas-body" class="divide-y divide-gray-200 text-gray-700">
+                                <!-- As vendas serão renderizadas dinamicamente pelo js/historico.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: DETALHES DA VENDA / RECIBO -->
+    <div id="modal-detalhe-venda" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+            
+            <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+                <div>
+                    <h3 id="detalhe-codigo-venda" class="font-bold text-gray-800">Venda #VD-000</h3>
+                    <p id="detalhe-data-venda" class="text-xs text-gray-500">-</p>
+                </div>
+                <button onclick="toggleModal('modal-detalhe-venda')" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4 overflow-y-auto flex-1 text-sm">
+                
+                <!-- Informações Principais -->
+                <div class="grid grid-cols-2 gap-4 bg-gray-50 p-3 rounded-lg border border-gray-200/60">
+                    <div>
+                        <span class="text-xs text-gray-400 block uppercase font-semibold">Cliente</span>
+                        <span id="detalhe-cliente" class="font-semibold text-gray-800">-</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-400 block uppercase font-semibold">Pagamento</span>
+                        <span id="detalhe-pagamento" class="font-semibold text-gray-800">-</span>
+                    </div>
+                </div>
+
+                <!-- Tabela de Itens da Venda -->
+                <div>
+                    <h4 class="text-xs font-semibold uppercase text-gray-400 mb-2 tracking-wider">Itens Comprados</h4>
+                    <div class="border rounded-lg overflow-hidden">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-gray-100 text-gray-600 border-b">
+                                <tr>
+                                    <th class="p-2.5">Item</th>
+                                    <th class="p-2.5 text-center">Qtd</th>
+                                    <th class="p-2.5 text-right">Preço Un.</th>
+                                    <th class="p-2.5 text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detalhe-itens-body" class="divide-y divide-gray-100 text-gray-700">
+                                <!-- Itens inseridos via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Totalizadores -->
+                <div class="space-y-1 pt-2 border-t text-right">
+                    <div class="text-gray-500 text-xs">Subtotal: <span id="detalhe-subtotal">0,00 Kz</span></div>
+                    <div class="text-base font-bold text-indigo-600">Total Pago: <span id="detalhe-total">0,00 Kz</span></div>
+                </div>
+
+            </div>
+
+            <!-- Rodapé com Ações do Recibo -->
+            <div class="p-4 bg-gray-50 border-t flex justify-between items-center">
+                <button type="button" onclick="imprimirRecibo()" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-900 rounded-lg text-sm font-medium flex items-center gap-2 transition shadow-sm">
+                    <i class="fa-solid fa-print"></i> Imprimir Recibo
+                </button>
+                <button type="button" onclick="toggleModal('modal-detalhe-venda')" class="px-4 py-2 border rounded-lg text-sm font-medium text-gray-600 hover:bg-white">Fechar</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/app.js"></script>
+    <script src="js/historico.js"></script>
+</body>
+</html>

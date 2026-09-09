@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos & Stock - Gestão e Vendas</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 antialiased">
+
+    <div class="flex min-h-screen">
+
+        <!-- NAVIGATOR / SIDEBAR -->
+        <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between hidden md:flex">
+            <div>
+                <div class="p-6 border-b border-slate-800">
+                    <h1 class="text-xl font-bold tracking-wide text-indigo-400">Gestão & Vendas</h1>
+                    <p class="text-xs text-gray-400 mt-1">Materiais de Construção</p>
+                </div>
+                <nav class="mt-6 px-4 space-y-2">
+                    <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+                    </a>
+                    <a href="produtos.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium transition">
+                        <i class="fa-solid fa-boxes-stacked w-5"></i> Produtos & Stock
+                    </a>
+                    <a href="clientes.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-users w-5"></i> Clientes
+                    </a>
+                    <a href="pos.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-cart-shopping w-5"></i> Nova Venda (POS)
+                    </a>
+                    <a href="historico.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-slate-800 hover:text-white font-medium transition">
+                        <i class="fa-solid fa-clock-rotate-left w-5"></i> Histórico
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-slate-800 text-xs text-gray-500 text-center">
+                v1.0.0 &bull; Sistema Interno
+            </div>
+        </aside>
+
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 flex flex-col">
+            
+            <!-- HEADER SUPERIOR -->
+            <header class="bg-white border-b px-8 py-4 flex justify-between items-center shadow-sm">
+                <h2 class="text-2xl font-bold text-gray-800">Gestão de Produtos & Stock</h2>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-medium text-gray-600">Operador</span>
+                    <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold border border-indigo-200">
+                        OP
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTEÚDO DA PÁGINA -->
+            <div class="p-8 space-y-6 flex-1">
+
+                <!-- BARRA DE AÇÕES (Pesquisa, Filtro e Novo Produto) -->
+                <div class="flex flex-col sm:flex-row justify-between gap-4">
+                    <div class="flex flex-1 gap-3 max-w-xl">
+                        <!-- Campo de Pesquisa -->
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="text" id="input-busca" onkeyup="filtrarProdutos()" placeholder="Pesquisar por nome ou SKU..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white shadow-sm">
+                        </div>
+                        <!-- Filtro por Categoria -->
+                        <select id="select-categoria" onchange="filtrarProdutos()" class="border border-gray-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm text-gray-600">
+                            <option value="">Todas as Categorias</option>
+                            <option value="Cimento">Cimento</option>
+                            <option value="Ferragens">Ferragens</option>
+                            <option value="Tintas">Tintas</option>
+                            <option value="Agregados">Agregados</option>
+                            <option value="Tubos">Tubos</option>
+                        </select>
+                    </div>
+
+                    <!-- Botão para Abrir Modal -->
+                    <button onclick="abrirModalProduto()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm transition shadow-sm">
+                        <i class="fa-solid fa-plus"></i> Registar Produto
+                    </button>
+                </div>
+
+                <!-- TABELA DE PRODUTOS -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 uppercase text-xs border-b">
+                                <tr>
+                                    <th class="px-6 py-3">Produto / SKU</th>
+                                    <th class="px-6 py-3">Categoria</th>
+                                    <th class="px-6 py-3">Unidade</th>
+                                    <th class="px-6 py-3">Preço Un.</th>
+                                    <th class="px-6 py-3">Stock Atual</th>
+                                    <th class="px-6 py-3">Estado</th>
+                                    <th class="px-6 py-3 text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-produtos-body" class="divide-y divide-gray-200 text-gray-700">
+                                <!-- Os produtos serão renderizados dinamicamente pelo js/produtos.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: CADASTRAR / EDITAR PRODUTO -->
+    <div id="modal-produto" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100">
+            <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+                <h3 id="modal-titulo" class="font-bold text-gray-800">Registar Novo Produto</h3>
+                <button onclick="toggleModal('modal-produto')" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="form-produto" onsubmit="salvarProduto(event)" class="p-6 space-y-4">
+                <input type="hidden" id="prod-id">
+                
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Nome do Produto *</label>
+                    <input type="text" id="prod-nome" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Cimento Secil 50kg">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">SKU / Código *</label>
+                        <input type="text" id="prod-sku" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: CIM-001">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Categoria *</label>
+                        <select id="prod-categoria" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                            <option value="Cimento">Cimento</option>
+                            <option value="Ferragens">Ferragens</option>
+                            <option value="Tintas">Tintas</option>
+                            <option value="Agregados">Agregados</option>
+                            <option value="Tubos">Tubos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Unidade de Medida</label>
+                        <select id="prod-unidade" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                            <option value="Saco">Saco</option>
+                            <option value="Vara">Vara</option>
+                            <option value="Lata">Lata</option>
+                            <option value="Unidade">Unidade</option>
+                            <option value="m³">m³ (Metro Cúbico)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Preço Venda (Kz) *</label>
+                        <input type="number" id="prod-preco" step="0.01" min="0" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Stock Atual *</label>
+                        <input type="number" id="prod-stock" min="0" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Stock Mínimo *</label>
+                        <input type="number" id="prod-stock-min" min="0" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="5">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t">
+                    <button type="button" onclick="toggleModal('modal-produto')" class="px-4 py-2 border rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm">Guardar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/app.js"></script>
+    <script src="js/produtos.js"></script>
+</body>
+</html>
