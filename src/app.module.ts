@@ -9,9 +9,10 @@ import { StockModule } from './stock/stock.module';
 import { SalesModule } from './sales/sales.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
-  imports: [PrismaModule, ProductsModule, CategoriesModule, ClientsModule, StockModule, SalesModule, AuthModule, UsersModule],
+  imports: [PrismaModule, ProductsModule, CategoriesModule, ClientsModule, StockModule, SalesModule, AuthModule, UsersModule, DashboardModule],
   controllers: [AppController],
   providers: [AppService],
 })
