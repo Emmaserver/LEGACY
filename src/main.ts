@@ -9,6 +9,10 @@ import { RolesGuard } from './auth/guards/roles.guard';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+   app.enableCors({
+    origin: 'http://localhost:3001',
+   });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
