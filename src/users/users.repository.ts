@@ -12,10 +12,18 @@ export class UsersRepository {
     });
   }
 
-  findAll() {
-    return this.prisma.user.findMany({
-      select: { id: true, nome: true, email: true, papel: true, estado: true, createdAt: true },
-    });
+  async findAll(skip: number, take: number) {
+    const [data, total] = await Promise.all([
+      this.prisma.user.findMany({
+        skip,
+        take,
+        select: { id: true, nome: true, email: true, papel: true, estado: true, createdAt: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.user.count(),
+    ]);
+
+    return { data, total };
   }
 
   deactivate(id: string) {

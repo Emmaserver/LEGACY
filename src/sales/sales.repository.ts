@@ -10,11 +10,18 @@ interface SaleItemInput {
 export class SalesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.sale.findMany({
-      include: { itens: true, pagamentos: true, client: true },
+	  async findAll(skip: number, take: number) {
+		    const [data, total] = await Promise.all([
+	this.prisma.sale.findMany({
+	skip,
+	take,
+     include: { itens: true, pagamentos: true, client: true },
       orderBy: { createdAt: 'desc' },
-    });
+    }),
+	this.prisma.sale.count(),
+	]);
+
+	return { data, total };
   }
 
   findById(id: string) {

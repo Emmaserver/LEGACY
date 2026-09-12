@@ -1,7 +1,9 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { paginate } from '../common/utils/paginate';
 
 @Injectable()
 export class UsersService {
@@ -18,8 +20,14 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return this.usersRepository.findAll();
+  async findAll(pagination: PaginationDto) {
+    const page = pagination.page ?? 1;
+    const limit = pagination.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const { data, total } = await this.usersRepository.findAll(skip, limit);
+
+    return paginate(data, total, page, limit);
   }
 
   deactivate(id: string) {

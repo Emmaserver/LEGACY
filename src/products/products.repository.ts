@@ -10,10 +10,18 @@ export class ProductsRepository {
     return this.prisma.product.create({ data });
   }
 
-  findAll() {
-    return this.prisma.product.findMany({
-      include: { category: true },
-    });
+  async findAll(skip: number, take: number) {
+    const [data, total] = await Promise.all([
+      this.prisma.product.findMany({
+        skip,
+        take,
+        include: { category: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.product.count(),
+    ]);
+
+    return { data, total };
   }
 
   findById(id: string) {
@@ -37,3 +45,4 @@ export class ProductsRepository {
     });
   }
 }
+

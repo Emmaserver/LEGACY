@@ -8,6 +8,9 @@ import { SalesRepository } from './sales.repository';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { RegisterPaymentDto } from './dto/register-payment.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { paginate } from '../common/utils/paginate';
+
 
 @Injectable()
 export class SalesService {
@@ -16,8 +19,13 @@ export class SalesService {
     private readonly prisma: PrismaService,
   ) {}
 
-  findAll() {
-    return this.salesRepository.findAll();
+  async findAll(pagination: PaginationDto) {
+	const page = pagination.page ?? 1;
+	const limit = pagination.limit ?? 20;
+	const skip = (page - 1) * limit;
+
+	const { data, total }  = await this.salesRepository.findAll(skip, limit);
+return paginate(data, total, page, limit);
   }
 
   async findById(id: string) {

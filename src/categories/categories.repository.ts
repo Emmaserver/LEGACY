@@ -10,8 +10,17 @@ export class CategoriesRepository {
     return this.prisma.category.create({ data });
   }
 
-  findAll() {
-    return this.prisma.category.findMany();
+  async findAll(skip: number, take: number) {
+    const [data, total] = await Promise.all([
+      this.prisma.category.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.category.count(),
+    ]);
+
+    return { data, total };
   }
 
   findById(id: string) {

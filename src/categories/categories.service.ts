@@ -6,6 +6,8 @@ import {
 import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { paginate } from '../common/utils/paginate';
 
 @Injectable()
 export class CategoriesService {
@@ -15,8 +17,14 @@ export class CategoriesService {
     return this.categoriesRepository.create(dto);
   }
 
-  findAll() {
-    return this.categoriesRepository.findAll();
+  async findAll(pagination: PaginationDto) {
+    const page = pagination.page ?? 1;
+    const limit = pagination.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const { data, total } = await this.categoriesRepository.findAll(skip, limit);
+
+    return paginate(data, total, page, limit);
   }
 
   async findById(id: string) {

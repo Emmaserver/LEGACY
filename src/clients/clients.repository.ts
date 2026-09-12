@@ -10,8 +10,17 @@ export class ClientsRepository {
     return this.prisma.client.create({ data });
   }
 
-  findAll() {
-    return this.prisma.client.findMany();
+  async findAll(skip: number, take: number) {
+    const [data, total] = await Promise.all([
+      this.prisma.client.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.client.count(),
+    ]);
+
+    return { data, total };
   }
 
   findById(id: string) {

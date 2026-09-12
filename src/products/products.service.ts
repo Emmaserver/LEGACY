@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductsRepository } from './products.repository';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { paginate } from '../common/utils/paginate';
 
 @Injectable()
 export class ProductsService {
@@ -15,8 +17,14 @@ export class ProductsService {
     });
   }
 
-  findAll() {
-    return this.productsRepository.findAll();
+  async findAll(pagination: PaginationDto) {
+    const page = pagination.page ?? 1;
+    const limit = pagination.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const { data, total } = await this.productsRepository.findAll(skip, limit);
+
+    return paginate(data, total, page, limit);
   }
 
   async findById(id: string) {
@@ -28,12 +36,12 @@ export class ProductsService {
   }
 
   async update(id: string, dto: UpdateProductDto) {
-    await this.findById(id); // valida que existe antes de atualizar
+    await this.findById(id);
     return this.productsRepository.update(id, dto);
   }
 
   async deactivate(id: string) {
-    await this.findById(id); // valida que existe antes de desativar
+    await this.findById(id);
     return this.productsRepository.deactivate(id);
   }
 }
